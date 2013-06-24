@@ -1,0 +1,168 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace ConjuntosMD
+{
+    class JogoDaVelha
+    {
+        private string[,] tabuleiro = new string[3,3];
+        private string ultimoJogador;
+        private string vencedor;
+
+        public string[,] Tabuleiro
+        {
+            get { return tabuleiro; }
+            set { tabuleiro = value; }
+        }
+
+        public void Jogada(int x, int y, string jogador)
+        {
+            if (tabuleiro[x, y] == null && vencedor == null)
+            {
+                Console.WriteLine("Jogada [" + x + "][" + y + "] permitida!\n");
+
+                Console.WriteLine("Jogador: " + jogador + "\n");
+
+                tabuleiro[x, y] = jogador;
+                ultimoJogador = jogador;
+
+                ImprimirTabuleiro();
+
+                VerificarVencedor();
+
+                //Jogar();
+            }
+            else
+            {
+                if (vencedor == null)
+                {
+                    Console.WriteLine("Jogada [" + x + "][" + y + "] não permitida!\n");
+                }
+                else
+                {
+                    Console.WriteLine("Já existe um vencedor: " + vencedor + "!");
+                }
+                //JogadaAleatoria();
+            }
+        }
+
+        public string Jogador(string ultimojogador)
+        {
+            string proximoJogador;
+
+            if (ultimoJogador == "X")
+            {
+                proximoJogador = "O";
+            }
+            else
+            {
+                proximoJogador = "X";
+            }
+
+            return proximoJogador;
+        }
+
+        public void VerificarJogadas()
+        {
+            Console.WriteLine("Verificando jogadas para próximo jogador: " + Jogador(ultimoJogador) + "\n");
+            
+            PercorrerTabuleiro(this.Tabuleiro, 0, 0);
+        }
+
+        public void PercorrerTabuleiro(string[,] campo, int x, int y)
+        {
+            if (campo[x, y] == null)
+            {
+                Console.WriteLine("Posição Disponível: [" + x + "][" + y + "]");
+
+                if (y < 2)
+                {
+                    PercorrerTabuleiro(campo, x, y + 1);
+                }
+                else
+                {
+                    y = 0;
+
+                    if (x < 2)
+                    {
+                        PercorrerTabuleiro(campo, x + 1, y);
+                    }
+                }
+            }
+            else
+            {
+                if (y < 2)
+                {
+                    PercorrerTabuleiro(campo, x, y + 1);
+                }
+                else
+                {
+                    y = 0;
+                    
+                    if (x < 2)
+                    {
+                        PercorrerTabuleiro(campo, x + 1, y);
+                    }
+                    else
+                    {
+                        Console.WriteLine("Fim da Verificação\n");
+                    }
+                }
+            }
+        }
+
+        public void ImprimirTabuleiro()
+        {
+            Console.WriteLine("\n" + tabuleiro[0, 0] + "|" + tabuleiro[0, 1] + "|" + tabuleiro[0, 2]);
+            Console.WriteLine(tabuleiro[1, 0] + "|" + tabuleiro[1, 1] + "|" + tabuleiro[1, 2]);
+            Console.WriteLine(tabuleiro[2, 0] + "|" + tabuleiro[2, 1] + "|" + tabuleiro[2, 2] + "\n");
+
+            //JogadaAleatoria();
+        }
+
+        public void JogadaAleatoria()
+        {
+            Random rdm = new Random();
+
+            Jogada(rdm.Next(3), rdm.Next(3), Jogador(ultimoJogador));
+        }
+
+        public void VerificarVencedor()
+        {
+            verificarDiagonais();
+
+            //Verificando Linhas
+            for (int i = 0; i < 3; i++)
+            {
+                if (tabuleiro[i, 0] != null && tabuleiro[i, 0] == tabuleiro[i, 1] && tabuleiro[i, 1] == tabuleiro[i, 2])
+                {
+                    vencedor = ultimoJogador;
+                    Console.WriteLine("Vencedor: " + vencedor);
+                }
+            }
+
+            //Verificando Colunas
+            for (int i = 0; i < 3; i++)
+            {
+                if (tabuleiro[0, i] != null && tabuleiro[0, i] == tabuleiro[1, i] && tabuleiro[1, i] == tabuleiro[2, i])
+                {
+                    vencedor = ultimoJogador;
+                    Console.WriteLine("Vencedor: " + vencedor);
+                }
+            }
+        }
+
+        public void verificarDiagonais()
+        {
+            if (tabuleiro[0, 0] == tabuleiro[1, 1] && tabuleiro[1, 1] == tabuleiro[2, 2] && tabuleiro[0, 0] != null ||
+                tabuleiro[0, 2] == tabuleiro[1, 1] && tabuleiro[1, 1] == tabuleiro[2, 0] && tabuleiro[0, 2] != null)
+            {
+                vencedor = ultimoJogador;
+                Console.WriteLine("Vencedor: " + vencedor);
+            }
+        }
+    }
+}
